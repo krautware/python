@@ -4,7 +4,7 @@
 #include <string.h>
 
 int main (int argc, char *argv[]) {
-    int i, n, l, j, res = 0;
+    int i, n, l, j, k, res = 0;
     time_t t;
     int augen[100] = {0};
    
@@ -19,8 +19,8 @@ int main (int argc, char *argv[]) {
 
   
     for( i = 0 ; i < n ; i++ ) {
-        int k = 1;
-        for(j = 0; j < l; ++j){
+        k = 0;
+        for(j = 0; j < l; ++j, ++k){
             int m;
             while(augen[m = (rand() % l)] != 0){
                 k++;
@@ -34,11 +34,13 @@ int main (int argc, char *argv[]) {
         
     }
     
-    for(j = i = 0; i < n; ++i){
+    for(k = j = i = 0; i < n; ++i){
         if(j < loops[i])
             j = loops[i];
+        if(loops[i] == l)
+            k++;
     }
      
-    printf("Gesamtläufe: %d -- Durchschnitt: %f -- maximal: %d\n\n", res, (float)res/n, j);
+    printf("Gesamtläufe: %d -- Durchschnitt: %f -- maximal: %d -- Minimum: %d\n\n", res, (float)res/n, j, k);
     return(0);
 }
