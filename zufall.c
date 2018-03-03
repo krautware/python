@@ -3,44 +3,56 @@
 #include <time.h>
 #include <string.h>
 
-int main (int argc, char *argv[]) {
-    int i, n, l, j, k, res = 0;
-    time_t t;
-    int augen[100] = {0};
-   
+#define MAX_PIPS  100
+#define MAX_FREQUENCE 1000
 
-    n = (argc > 1 ? atoi(argv[1]) : 5);
-    l = (argc > 2 ? atoi(argv[2]) : 5);
- 
-    int loops[n];
+int main (int argc, char *argv[]) {
+    int i, j, m, max_cycles, max_pips, cast, res = 0;
+    time_t t;
+    int pips[100] = {0};
+    int frequence[MAX_FREQUENCE] = {0};
+
+    max_pips = (argc > 1 ? atoi(argv[1]) : 6);
+    max_cycles = (argc > 2 ? atoi(argv[2]) : 10);
+    
+    
+    if(max_pips > MAX_PIPS)
+        max_pips = MAX_PIPS;
+
+    int cycles[max_cycles];
    
     /* Intializes random number generator */
     srand((unsigned) time(&t));
 
   
-    for( i = 0 ; i < n ; i++ ) {
-        k = 0;
-        for(j = 0; j < l; ++j, ++k){
-            int m;
-            while(augen[m = (rand() % l)] != 0){
-                k++;
+    for( i = 0 ; i < max_cycles ; i++ ) {
+        for(cast = j = 0; j < max_pips; ++j, ++cast){
+            while(pips[m = (rand() % max_pips)] != 0){
+                cast++;
             }
-            augen[m] = 1;
+            pips[m] = 1;
         }
-        res += k;
-        loops[i] = k;
-        for(j = 0; j < l; ++j)
-            augen[j] = 0;
+        res += cast;
+        cycles[i] = cast;
+        for(j = 0; j < max_pips; ++j)
+            pips[j] = 0;
         
     }
     
-    for(k = j = i = 0; i < n; ++i){
-        if(j < loops[i])
-            j = loops[i];
-        if(loops[i] == l)
-            k++;
+    for(m = j = i = 0; i < max_cycles; ++i){
+        if(j < cycles[i])
+            j = cycles[i];
+        if(cycles[i] == max_pips)
+            m++;
+        frequence[cycles[i]]++;
     }
      
-    printf("Gesamtläufe: %d -- Durchschnitt: %f -- maximal: %d -- Minimum: %d\n\n", res, (float)res/n, j, k);
+    printf("Gesamtläufe: %d -- Durchschnitt: %f -- maximal: %d -- Minimum: %d\n", 
+            res, (float)res/max_cycles, j, m);
+    for(i = 0; i < MAX_FREQUENCE; ++i){
+        if(frequence[i])
+            printf("%d: %d\n", i, frequence[i]);
+    }
+    
     return(0);
 }
