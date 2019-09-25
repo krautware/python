@@ -36,7 +36,7 @@ int build_fields(void){
             pattern <<= 1;
             lines[i] = line;
     }
-    
+
 
     /* build the diagonals */
 
