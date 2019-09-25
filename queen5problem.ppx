@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings version="1.0">
+	<category name="queen5problem.c">
+		<category name="Window">
+			<property name="Left" type="integer">-8</property>
+			<property name="Top" type="integer">-31</property>
+			<property name="Right" type="integer">1367</property>
+			<property name="Bottom" type="integer">468</property>
+			<property name="Maximized" type="integer">1</property>
+			<property name="Active" type="integer">1</property>
+		</category>
+		<category name="Breakpoints">
+			<category name="Breakpoint1">
+				<property name="Line" type="integer">90</property>
+				<property name="Enabled" type="integer">1</property>
+				<property name="HitCount" type="integer">0</property>
+				<property name="Expression" type="string"></property>
+			</category>
+			<category name="Breakpoint2">
+				<property name="Line" type="integer">129</property>
+				<property name="Enabled" type="integer">1</property>
+				<property name="HitCount" type="integer">0</property>
+				<property name="Expression" type="string"></property>
+			</category>
+			<category name="Breakpoint3">
+				<property name="Line" type="integer">20</property>
+				<property name="Enabled" type="integer">1</property>
+				<property name="HitCount" type="integer">0</property>
+				<property name="Expression" type="string"></property>
+			</category>
+			<category name="Breakpoint4">
+				<property name="Line" type="integer">30</property>
+				<property name="Enabled" type="integer">0</property>
+				<property name="HitCount" type="integer">0</property>
+				<property name="Expression" type="string"></property>
+			</category>
+			<category name="Breakpoint5">
+				<property name="Line" type="integer">24</property>
+				<property name="Enabled" type="integer">0</property>
+				<property name="HitCount" type="integer">0</property>
+				<property name="Expression" type="string"></property>
+			</category>
+		</category>
+	</category>
+</settings>
