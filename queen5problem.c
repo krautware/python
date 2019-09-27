@@ -167,6 +167,7 @@ int main(int argc, char *argv[])
     int hit = 0;
     int res;
     int hit_array[10000];
+    
 	build_fields();
     for(int d1 = 0;d1 < 60; d1++){
         for(int d2 = d1 + 1; d2 < 61; d2++){
