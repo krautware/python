@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <time.h>
+
 
 bool fields_build = false;
 
@@ -136,7 +138,7 @@ int print_board(int from, int til){
     for(i = 0; i < 64; i++){
         z.t = fields[i];
         printf("Feld: %c%d\n", letters[(i & 7)], (i>>3) + 1) ;
-        printf("%2d= %s\n", i, toBinaryString(fields[i], &s));
+        printf("%2d= %s\n", i, toBinaryString(fields[i], (char *) &s));
         printf("  %s    \n", header);
         printf("%s\n", line);
         for(j = 7; j >= 0; j--){
@@ -167,7 +169,13 @@ int main(int argc, char *argv[])
     int hit = 0;
     int res;
     int hit_array[10000];
+    clock_t start, end;
+    double time_taken;
 
+    #define MAX_SOLUTIONS 10000
+    int positions[MAX_SOLUTIONS];
+    
+    start = clock();
     build_fields();
     for(int d1 = 0;d1 < 60; d1++){
         for(int d2 = d1 + 1; d2 < 61; d2++){
@@ -176,7 +184,15 @@ int main(int argc, char *argv[])
                     for(int d5 = d4 + 1;d5 < 64; d5++){
                         count++;
                         if(check_board(d1, d2, d3, d4, d5)){
-                            hit_array[hit++] = count; 
+                            hit_array[hit] = count;
+                            if(hit < MAX_SOLUTIONS){
+                                res = d1;
+                                res <<= 5; res += d2;
+                                res <<= 5; res += d3;
+                                res <<= 5; res += d4;
+                                res <<= 5; res += d5;
+                            } 
+                            hit++;
                         }                            
                     }
                 }
@@ -185,5 +201,8 @@ int main(int argc, char *argv[])
     }
     /* res += print_board(0, 63); */
     printf("Zahl der Durchläufe: %d\nZahl der Treffer: %d\n", count, hit);
+    end = clock();
+    time_taken = ((double) end - (double) start)/CLOCKS_PER_SEC;
+    printf("Gesamtlaufzeit: %f Sekunden\n", time_taken);
     exit(0);
 }
