@@ -66,10 +66,9 @@ int build_fields(void){
     for(i = 1; i < 7; i++){
         diagonal_elements[7] = 0, l_diagonal_vector=0, r_diagonal_vector = 0, pattern = 0;
         int end = i;
-        for(int k = 0, offset = LEFT; k < 2; ++k, offset = RIGHT, end = 7 - i){
+        for(int k = 0, offset = LEFT; k < 2; ++k, offset = RIGHT, end = 7 -i){
             diagonal_elements[0] = i;
             l_diagonal_vector |= (1 << i), pattern |= (1 << i);
-            /* j = i; */
             for(count = 1, j = end;j > 0;j--, count++){
                 diagonal_elements[count] = diagonal_elements[count - 1] + offset;
                 l_diagonal_vector |= (pattern <<= offset);
@@ -86,10 +85,10 @@ int build_fields(void){
         }
     } 
 
-	/* Finally set the bitpatterns for rows and lines */
+	/* Finally set the bitpatterns for rows and lines 
 	for(i = 0; i < 64; i++){
 		fields[i] |= (lines[(i & 7)]|rows[(i >> 3)]);
-	}
+	} */
     fields_build = true;
     return 0;
 }
