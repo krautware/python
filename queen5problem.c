@@ -54,7 +54,7 @@ int build_fields(void){
     /* And now set the pattern in the table of fields
        diagonal_elements contain the fields of the diagonal A1-H8
        the correspomdig fields of the diagonal H8-A1 are computed by the formula
-       56 - diagonal_elements[i] + 2*i - i in [0..7] */
+       56 - diagonal_elements[i] + 2*i with i in [0..7] */
     for(i = 0; i < 8; i++){
         fields[diagonal_elements[i]] |= r_diagonal_vector;
         fields[56 - diagonal_elements[i] + 2*i] |= l_diagonal_vector;
@@ -81,14 +81,14 @@ int build_fields(void){
                 fields[diagonal_elements[j]] |= l_diagonal_vector;
                 fields[63 - diagonal_elements[j]] |= r_diagonal_vector;
             }
-            l_diagonal_vector = r_diagonal_vector = 0;
+            l_diagonal_vector = r_diagonal_vector = pattern = 0;
         }
     } 
 
-	/* Finally set the bitpatterns for rows and lines 
+	/* Finally set the bitpatterns for rows and lines */
 	for(i = 0; i < 64; i++){
 		fields[i] |= (lines[(i & 7)]|rows[(i >> 3)]);
-	} */
+	} 
     fields_build = true;
     return 0;
 }
@@ -154,7 +154,7 @@ int print_board(int from, int til){
         }
         printf("  %s    \n", header);
 
-        getchar();
+        /* getchar(); */
 
         
     }    
@@ -174,15 +174,15 @@ int main(int argc, char *argv[])
                 for(int d4 = d3 +1; d4 < 63; d4++){
                     for(int d5 = d4 + 1;d5 < 64; d5++){
                         count++;
-                        /* if(check_board(d1, d2, d3, d4, d5)){
+                        if(check_board(d1, d2, d3, d4, d5)){
                             hit_array[hit++] = count; 
-                        }  */                          
+                        }                            
                     }
                 }
             }
         }
     }
-    res += print_board(0, 63);
-    printf("Zahl der Durchläufe: %d\n", count);
+    /* res += print_board(0, 63); */
+    printf("Zahl der Durchläufe: %d\nZahl der Treffer: %d\n", count, hit);
     exit(0);
 }
