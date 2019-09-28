@@ -3,11 +3,13 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <time.h>
-
+#include <string.h>
 
 bool fields_build = false;
-
+#define MAX_SOLUTIONS 10000
+int positions[MAX_SOLUTIONS];
 uint64_t fields[64] = {0};
+char letters[] = "abcdefgh";
 
 int build_fields(void){
     uint64_t pattern = 1, pattern2;
@@ -128,7 +130,7 @@ int print_board(int from, int til){
     char header[] ={"| A | B | C | D | E | F | G | H |"};
     char *line = "____________________________________";
     char s[80] = {0};
-    char *letters = "ABCDEFGH";
+    
     union {
         uint64_t t;
         char a[8];
@@ -163,17 +165,48 @@ int print_board(int from, int til){
     return 0;
 }
 
+char *extract_position(int p, char *buf)
+{
+    int res[5], i;
+    char *s = buf;
+    static int count = 0;
+
+    ++count;
+
+    for(i = 4; i >= 0; --i){
+        res[i] = p & 63;
+        p >>= 6;
+        if(count == 1){
+            printf("%d ", res[i]);
+        }
+    }
+
+    for(i = 0; i  < 5; ++i){
+        sprintf(s, "%c%d ", letters[res[i]&7], (res[i]>>3) + 1);
+        if(count == 1){
+            printf("Feldnr: %d -> buf = %s - s = %s len(buf) = %lu - len(s) %lu\n", 
+                        res[1], buf, s, strlen(buf), strlen(s));
+        }
+        s += strlen(s);
+    }
+    if(count == 1){
+        printf("Puffer = %s\n", buf);
+    }
+    *(buf + strlen(buf) - 1) = 0;
+
+    return buf;
+    
+}
 int main(int argc, char *argv[])
 {
     int count = 0; 
     int hit = 0;
-    int res;
+    int res, i;
     int hit_array[10000];
     clock_t start, end;
     double time_taken;
-
-    #define MAX_SOLUTIONS 10000
-    int positions[MAX_SOLUTIONS];
+    FILE *fp;
+    char buf[20] = {0};
     
     start = clock();
     build_fields();
@@ -185,12 +218,16 @@ int main(int argc, char *argv[])
                         count++;
                         if(check_board(d1, d2, d3, d4, d5)){
                             hit_array[hit] = count;
+                            if(hit == 0){
+                                printf("%d %d %d %d %d\n", d5, d4, d3, d2, d1);
+                            }
                             if(hit < MAX_SOLUTIONS){
                                 res = d1;
-                                res <<= 5; res += d2;
-                                res <<= 5; res += d3;
-                                res <<= 5; res += d4;
-                                res <<= 5; res += d5;
+                                res <<= 6; res += d2;
+                                res <<= 6; res += d3;
+                                res <<= 6; res += d4;
+                                res <<= 6; res += d5;
+                                positions[hit] = res;
                             } 
                             hit++;
                         }                            
@@ -199,7 +236,19 @@ int main(int argc, char *argv[])
             }
         }
     }
-    /* res += print_board(0, 63); */
+    
+    /* Dump the positions vector into file */
+    if((fp = fopen("positions.txt", "w")) == NULL){
+        printf("Kann Datei nicht zum Schreiben öffnen!\n");
+    }
+    else{
+        printf("Speichere den Ergebnisvektor unter positions.txt\n");
+        for(i = 0; i < ((hit < MAX_SOLUTIONS) ? hit : (hit + 1)); ++i){
+            /* printf("%s\n", extract_position(positions[i], (char *) &buf)); */
+            fprintf(fp, "%s\n", extract_position(positions[i], (char *) &buf));
+        }
+        fclose(fp);
+    }
     printf("Zahl der Durchläufe: %d\nZahl der Treffer: %d\n", count, hit);
     end = clock();
     time_taken = ((double) end - (double) start)/CLOCKS_PER_SEC;
