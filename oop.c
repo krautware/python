@@ -4,9 +4,9 @@
 
 typedef {
     int a;
-    char *(fnc(void *this, int a));
+    char * (*fnc) (oop *, int );
 } oop;
 
 int main(int argc, char *argv[]){
-    
+
 }
