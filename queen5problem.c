@@ -167,8 +167,10 @@ int print_board(int from, int til){
 
 char *extract_position(int p, char *buf)
 {
-    int res[5], i;
+    int res[5] = {0}, i, j;
     char *s = buf;
+    char temp[5][3] = {0};
+    char t[3] = {0};
     static int count = 0;
 
     ++count;
@@ -182,17 +184,36 @@ char *extract_position(int p, char *buf)
     }
 
     for(i = 0; i  < 5; ++i){
-        sprintf(s, "%c%d ", letters[res[i]&7], (res[i]>>3) + 1);
-        if(count == 1){
-            printf("Feldnr: %d -> buf = %s - s = %s len(buf) = %lu - len(s) %lu\n", 
-                        res[1], buf, s, strlen(buf), strlen(s));
+        // s += sprintf(s, "%c%d ", letters[res[i]&7], (res[i]>>3) + 1);
+        sprintf(temp[i], "%c%d", letters[res[i]&7], (res[i]>>3) + 1);   
+    }
+
+    /* sort the entries in temp[] */
+    for(i = 0; i < 4; i++){
+        for(j = i + 1; j < 5; j++){
+            if(strcmp(temp[i], temp[j]) > 0){
+                /* swap */
+                strcpy(t, temp[i]);
+                strcpy(temp[i], temp[j]);
+                strcpy(temp[j], t);
+            }
         }
-        s += strlen(s);
+    }
+
+    for(i = 0; i < 5; i++){
+        if(count == 1)
+            printf("temp[%d] = %s ", i, temp[i]);
+        s += sprintf(s, "%s ", temp[i]);
+    }
+
+    if(count == 1){
+            printf("Feldnr: %d -> buf = %s - s = %s len(buf) = %lu - len(s) = %lu\n", 
+                        res[1], buf, s, strlen(buf), strlen(s));
     }
     if(count == 1){
         printf("Puffer = %s\n", buf);
     }
-    *(buf + strlen(buf) - 1) = 0;
+     *(buf + strlen(buf) - 1) = 0;
 
     return buf;
     
