@@ -5,9 +5,8 @@
 #define MAX 1000000000
 #define POPULATION 9000000
 #define ANCESTORS 4001
+#define DESCENDANTS 100000
 #define FREQUENCY 10
-#define OLD 0
-
 
 typedef struct P {
     int ancestor;
@@ -16,6 +15,8 @@ typedef struct P {
 
 int ancestors[ANCESTORS], counts[ANCESTORS];
 P hash_vec[ANCESTORS];
+int descendants[DESCENDANTS];
+int ancestor_freq[20];
 
 int my_random(void){
     static long max_member = RAND_MAX - (RAND_MAX % POPULATION);
@@ -26,19 +27,78 @@ int my_random(void){
     return (member % POPULATION) + 1;
 }
 
+int isancestor(int ancestor){
+    int hash = ancestor % ANCESTORS;
+    P *p;
+
+    if(hash_vec[hash].ancestor == 0)
+        return 0;
+    if(hash_vec[hash].ancestor == ancestor)
+        return 1;
+    p = hash_vec[hash].p;
+    while(p){
+        if(p->ancestor == ancestor){
+            return 1;
+        }
+        else{
+            p = p->p;
+        }
+    }
+
+    return 0;
+}
+
+int check_descendants(void){
+    int i, sum;
+
+    for(sum = i = 0; i < ANCESTORS; ++i){
+        sum += isancestor(my_random());
+    }
+
+    return sum;
+}
+
+void check_hash_vec(int frequency[]){
+
+    int i, j;
+    P *p;
+
+    for(i = 0; i < ANCESTORS; ++i){
+        if(hash_vec[i].ancestor == 0){
+            frequency[0]++;
+            continue;
+        }
+        
+        if(hash_vec[i].p == NULL){
+            frequency[1]++;
+            continue;
+        }
+        
+        p = hash_vec[i].p;
+        j = 2;
+        while((p = p->p)){
+            j++;
+        }
+        frequency[j]++;
+
+    }
+}
+
 int main(int argc, char** argv){
+
+    int candidate;
+    int i, sum, sum2, singular, hash;
+    long max = -1;
+    long min = RAND_MAX;
+    int doublette = 0;
+
+    P *p = NULL;
+    int frequency[FREQUENCY] = {0};
+    int frequency2[FREQUENCY] = {0};
 
     time_t t = time(NULL);
 
     srandom(t);
-
-    int candidate;
-    int i, sum, singular, hash;
-    long max = -1;
-    long min = RAND_MAX;
-
-    P *p = NULL;
-    int frequency[FREQUENCY] = {0};
 
     for(i = 0; i < ANCESTORS; ++i){
         singular = 1;
@@ -49,13 +109,11 @@ int main(int argc, char** argv){
         
             if(hash_vec[hash].ancestor == 0){
                 hash_vec[hash].ancestor = candidate;
-#ifdef OLD
-                counts[hash]++;
-#endif
                 singular = 0;
             }   
             else{
                 if(hash_vec[hash].ancestor == candidate){
+                    doublette++;
                     continue;
                 }else{
                     if((hash_vec[hash].ancestor != candidate) && (hash_vec[hash].p == NULL)){
@@ -65,11 +123,7 @@ int main(int argc, char** argv){
                         }
                         hash_vec[hash].p->ancestor = candidate;
                         hash_vec[hash].p->p = NULL;
-#ifdef OLD
-                        counts[hash]++;
-                        singular = 0;
-#endif
-                        
+                        singular = 0;                        
                     }
                     else{
                         p = hash_vec[hash].p;
@@ -85,10 +139,6 @@ int main(int argc, char** argv){
                                 }
                                 p = p->p;
                                 p->ancestor = candidate;
-#ifdef OLD                                                                                     
-                                counts[hash]++;
-                                /* printf("Mehr als einmal\n"); */
-#endif                                
                                 p->p = NULL;
                                 singular = 0;
                                 p = p->p;
@@ -98,15 +148,15 @@ int main(int argc, char** argv){
                 }
             }
         }while(singular);
-#ifndef OLD        
-        counts[hash]++;
-#endif        
         ancestors[i] = candidate;
+        counts[hash]++;
     }
 
     for(i = 0; i < ANCESTORS; ++i){
         frequency[counts[i]]++;
     }
+
+    check_hash_vec(frequency2);
 
     for(i = 0; i < ANCESTORS; ++i){
         if(max < ancestors[i])
@@ -115,10 +165,17 @@ int main(int argc, char** argv){
             min = ancestors[i];
     }
 
-    printf("\nMIN Wert: %9.ld\nMAX Wert: %9.ld\n", min, max);
+    printf("Doubletten = %d\n", doublette);
 
-    for(sum = i = 0; i < FREQUENCY; ++i){
-        printf("%2d -> %4d --> %4d\n", i, frequency[i], sum += frequency[i]);
+/*
+    printf("\nMIN Wert: %9.ld\nMAX Wert: %9.ld\n", min, max);
+    
+    
+    for(sum = sum2 = i = 0; i < FREQUENCY; ++i){
+        printf("%2d -> %4d --> %4d\t%2d -> %4d -->%4d ---> Differenz = %4d\n", 
+                i, frequency[i], sum += frequency[i],
+                i, frequency2[i], sum2 += frequency2[i],
+                frequency[i] - frequency2[i]);
     }
     
     for(sum = i = 0; i < FREQUENCY; ++i){
@@ -127,6 +184,28 @@ int main(int argc, char** argv){
 
     printf("Gesamt: %d\n", sum);
     printf("Durchschnitt: %.2f\n", (float)sum / (ANCESTORS - frequency[0]));
+*/
+    t += my_random();
+    srandom(t);
 
+    for(i = 0; i < DESCENDANTS; ++i){
+        descendants[i] = check_descendants();
+    }
 
+    for(i = 0; i < DESCENDANTS; ++i){
+        ancestor_freq[descendants[i]]++;
+    }
+
+    for(sum = i = 0; i < 20; ++i){
+        sum += ancestor_freq[i] * i;
+    }
+
+    printf("Gesamt: %d\n", sum);
+    printf("Durchschnitt: %.2f\n", (float) sum / DESCENDANTS);
+
+    for(sum = i = 0; i < 20; ++i){
+        printf("%2d --> %5d --> %6d --> %6.2f%%\n", 
+            i, ancestor_freq[i], sum += ancestor_freq[i],
+            (float) ancestor_freq[i]/DESCENDANTS * 100);
+    }
 }
