@@ -187,7 +187,7 @@ int q_sort(FACTORLIST *f){
 }
 int main(int argc, char **argv){
     int i, j, k, primes, *p;
-    int primesOfSel1, primesOfSel2;
+    int primesOfSel1, primesOfSel2;#
     uint64_t res1 = 0;
     uint64_t res2 = 0;
 
