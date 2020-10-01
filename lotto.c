@@ -24,6 +24,7 @@ typedef struct{
 
 
 
+
 int n_over_k(int n, int k){
 
     uint64_t res = 1;
@@ -82,7 +83,11 @@ int init_comb_vec(void){
                 break;
             if((48 - i + j) < 5)
                 continue;
-            comb[i][j] = n_over_k(48 - i, 5 - j);
+            if(i == 0){
+                comb[i][j] = n_over_k(48 - i, 5 - j);
+            }else{
+                comb[i][j] = comb[i - 1][j] + n_over_k(48 - i, 5 - j);
+            }
         }
     }
 
@@ -130,32 +135,36 @@ int check_combination(void){
 
 int calc_comb(void){
     int sum = 0;
-    int j;
+    int j, u;
 
     for(int i = 0; i < 5; ++i){
-        j = ((i > 0) ? gz[i - 1] : 0);
-        for(int z = gz[i] - 1; j < z; ++j){
-            sum += comb[j][i];
-        }
+        u = ((i > 0) ? gz[i - 1] - 1: 0);
+        j = gz[i] - 2;
+        if(j < 0)
+            continue;
+        if(u != 0)
+            u = comb[u][i];
+        sum += (comb[j][i] - u);
     }
     sum += (gz[5] - gz[4]);
     return sum;
 }
 
 int resolv_comb(int number){
-    int temp = 0, sum = 0, j = 0, i;
+    int temp = 0, sum = 0, j = 0, i, nr = number;
 
     if((number < 1) || (number > MAX_COMB))
         return FAILURE;
     for(i = 0; i < 5; ++i){
-        while((temp += comb[j][i]) < number){
-            sum = temp;
+        while((comb[j][i]) < nr){
             ++j;
         }
-        temp = sum;
+        sum += comb[j - 1][i];
+        temp = ((i < 4) ? comb[j][i + 1] : 0);
+        nr -= (comb[j - 1][i] - temp);
         gz_resolv[i] = ++j;
     }
-    gz_resolv[i] = gz_resolv[i - 1] + (number - sum);
+    gz_resolv[i] = gz_resolv[i - 1] + nr;
     /* assert(gz_resolv[i] < 50); */
     return SUCCESS;
 }
@@ -253,16 +262,25 @@ int main(int argc, char **argv){
     time_t t;
     clock_t start_t, end_t;
     int not_chosen = MAX_COMB;
-    int comb_nr, n, z, i = 0, j, res, sum = 0;
+    int comb_nr, n, z = 0, i = 0, j, res, sum = 0;
 
     start_t = clock();
     init_comb_vec();
-    
+    /* for(i = 0; i < 48; ++i){
+        printf("%2d -> ", i);
+        for(j = 0; j < 5; ++j){
+            printf("%9d ", comb[i][j]);
+        }
+        printf("\n");
+    } */
     srand((unsigned) time(&t));
-    /* resolv_comb(13131313);
-    print_comb(gz_resolv); exit(0); */
+    /* resolv_comb(11071959);
+    print_comb(gz_resolv); exit(0); 
+    gz[0] = 11, gz[1] = 19, gz[2] = 27, gz[3] = 28, gz[4] = 42, gz[5] = 45;
+    printf("Kombination -> %d\n", calc_comb());exit(0); */
+    i = 0;
     while(not_chosen > 0){
-        i++;
+        i++; 
         ziehung();
         if(resolv_comb(comb_nr = calc_comb()) == FAILURE){
             printf("Fehler bei resolv_comb()\n");
@@ -272,8 +290,16 @@ int main(int argc, char **argv){
         } */
 
         all_comb[comb_nr]++;
-        if(all_comb[comb_nr] == 1)
+        if(all_comb[comb_nr] < 2){
             not_chosen--; 
+        }else{
+            z++;
+            if(z == 1){
+                printf("Erste Dublette nach %d Ziehungen!\n", i);
+                print_comb(gz);
+            }
+        }
+        
         
         if(i % 10000000 == 0){
             printf("Ziehung: %d, bisher %d verschiedene Kombinationen gezogen!\n", i, MAX_COMB - not_chosen);
@@ -289,7 +315,7 @@ int main(int argc, char **argv){
     (void) print_most_chosen(10);
     if((j = print_all_not_chosen()) != not_chosen){
         printf("Fehler bei not_chosen! Zurückgeliefert wird %d\n", j);
-    }
+    } 
     for(i = 1; i < 50; ++i){
         printf("%2d: %4d\n", i, all_comb[i]);
     }
@@ -303,7 +329,7 @@ int main(int argc, char **argv){
         }
     }
 
-    printf("Es gibt %d Kombinationen, die nur einmal gezogen wurden!\n", res);
+    printf("Es gibt %d Kombinationen, die nur einmal gezogen wurden!\n", res); 
 
     end_t = clock();
     printf("Total CPU clocks: %d\n", end_t - start_t);
