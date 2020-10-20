@@ -5,6 +5,8 @@
 #include <time.h>
 #include <stdint.h>
 #include <math.h>
+#include <limits.h>
+#include <inttypes.h>
 
 #define MAX_STAEDTE 13
 #define MAX_PATH_COUNTER 10
@@ -85,7 +87,7 @@ int calc_distance(void){
     return j;
 }
 
-int print_dst_matrix(void){
+void print_dst_matrix(void){
     int i, j;
     char hr[86] = "----";
 
@@ -137,12 +139,64 @@ int calc_path(void){
     return sum;
 }
 
-uint64_t permute(int n){
+uint64_t permute(int n, int *vec, int (*c)(void)){
+#define MAX_STACK 30
+    uint64_t counter = 0;
+    int stack[MAX_STACK][2];
+    int d, l, i;
+
+    for(i = 1; i < MAX_STACK; ++i){
+        stack[i][0] = 0, stack[i][1] = i;
+    }
+
+    d = 1;
+
+    while(d > 0){
+        if(stack[d][0] <= n - d){
+            stack[d][0]++;
+            if(vec[l = stack[d][1]] == d){
+                vec[l] = 0;
+            }
+           
+            do{
+                ++l;
+                if(l > n){
+                    l = 1;
+                }
+            }while(vec[l] != 0);
+                    
+            vec[l] = d;
+            stack[d][1] = l;
+            if(d == n){
+                counter++;
+                c();
+                vec[l] = 0;
+                stack[d][0] = 0;
+                --d;
+            }
+            else{
+                d++;
+            }
+        }
+        else{
+            stack[d][0] = 0;
+            vec[l = stack[d][1]] = 0;
+            stack[d][1] = ++l;
+            --d;
+        }
+
+    }
+    return counter;
+}
+
+
+uint64_t permute_rek(int n){
     static uint64_t counter = 0;
-    int i, j;
+    int i;
     int d = n;
     int l = 0;
 
+    
     ++l;
     while(d > 0){
         while((l < MAX_STAEDTE) && (tsp_path[l] != 0)){
@@ -159,15 +213,8 @@ uint64_t permute(int n){
             exit(1);
         }
         if(n > 1){
-            permute(n - 1);
+            permute_rek(n - 1);
         }else{
-           if((counter % 1000000000) == 0){
-                printf("Erhöhe counter um 1: %lld! Bisheriges Minimum %d, bisheriges Maximum %d! l = %d, d = %d, n = %d\n", counter, min_path, max_path, l, d, n);
-                for(i = 0; i <= MAX_STAEDTE; ++i){
-                    printf("%d ", tsp_path[i]);
-                }
-                printf("\n");
-            }     
             counter++;
             calc_path();
         }    
@@ -199,7 +246,6 @@ Minmax calc_abs_max(void){
 }
 
 uint64_t fak(int n){
-    int i = n;
     uint64_t p;
 
     for(p = 1; n > 1; --n){
@@ -212,6 +258,7 @@ int main(int argc, char **argv){
     time_t t;
     clock_t start_t, end_t;
     uint64_t res, f;
+    int i, j, h;
 
     srand((unsigned)time(&t));
     fflush(stdout);
@@ -220,17 +267,39 @@ int main(int argc, char **argv){
     print_dst_matrix();
     abs_max = calc_abs_max();
     printf("\nAbsolute Max Distance: %d, absolute Min Distance: %d\n", abs_max.max, abs_max.min);
-    res = permute(MAX_STAEDTE - 1);
-    if(res != (f = fak(MAX_STAEDTE - 1))){
-        printf("Something has gone wrong in permute()! res = %lld, f = %lld\n", res, f);
-    }
-    printf("Es existieren %d kuerzeste Pfad mit Distanz %d\n", min_path_counter, min_path);
-    for(int i = 0; i < min_path_counter; ++i){
-        for(int j = 0; j <= MAX_STAEDTE; ++j){
-            printf("%d ", min_path_list[i][j]);
+    for(h = 0; h < 2; ++h){
+        start_t = clock();
+        if(h < 1){
+            printf("in permute_rek!\n");
+            res = permute_rek(MAX_STAEDTE - 1);
+        }else{
+            res = permute(MAX_STAEDTE - 1, tsp_path, calc_path);
+            
         }
-        printf("\n");
+        if(res != (f = fak(MAX_STAEDTE - 1))){
+            printf("Something has gone wrong in permute! res = %" PRIu64 " f = %"  PRIu64 "\n", res, f);
+        }
+        printf("Es existieren %d kuerzeste Pfad mit Distanz %d\n", min_path_counter, min_path);
+        for(int i = 0; i < min_path_counter; ++i){
+            for(int j = 0; j <= MAX_STAEDTE; ++j){
+                printf("%d ", min_path_list[i][j]);
+            }
+            printf("\n");
+        }   
+        printf("Laengste Distanz: %d\n", max_path);
+        end_t = clock();
+        printf("Total CPU clocks: %ld\n", end_t - start_t);
+        printf("Total CPU Time: %f\n", (double)(end_t - start_t) / CLOCKS_PER_SEC);
+        for(i = 1; i < MAX_STAEDTE; ++i){
+            tsp_path[i] = 0;
+        }
+        for(i = 0; i < min_path_counter; ++i){
+            for(j = 0; j <= MAX_STAEDTE; ++j){
+                min_path_list[i][j] = 0;
+            }
+        }
+        min_path_counter = 0;
+        min_path = INT_MAX; 
+        max_path = 0;
     }
-    printf("Laengste Distanz: %d\n", max_path);
-
 }
