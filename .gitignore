@@ -3,3 +3,11 @@ queen5problem.dbg
 zufall.exe
 queen5problem.tag
 queen5problem.ppx
+*.exe
+*.ppj
+*.ppx
+*.tag
+*.json
+*.db
+*.ipch
+*.obj
