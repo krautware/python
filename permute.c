@@ -5,14 +5,14 @@
 #include <inttypes.h>
 #include <string.h>
 
-#define MAX_SIZE 12
+#define MAX_SIZE 13
+#define MAX_STACK 30
 #define SUCCESS 0
 #define FAILURE -1
 
 int tsp[MAX_SIZE + 10] = {0};
 
-uint64_t permute(int n, int *vec, uint64_t (*c)(uint64_t, int)){
-#define MAX_STACK 30
+uint64_t permute(int n, int *vec, int (*c)(uint64_t, int)){
     uint64_t counter = 0;
     int stack[MAX_STACK][2];
     int d, l, i;
@@ -35,7 +35,7 @@ uint64_t permute(int n, int *vec, uint64_t (*c)(uint64_t, int)){
                     l = 1;
                 }
             } while(vec[l] != 0);
-           
+
             vec[l] = d;
             stack[d][1] = l;
             if(d == n){
@@ -60,10 +60,60 @@ uint64_t permute(int n, int *vec, uint64_t (*c)(uint64_t, int)){
     return counter;
 }
 
-uint64_t call_path(uint64_t nr, int ende){
+uint64_t permute_neu(int n, int *vec, int (*c)(uint64_t, int)){
+    uint64_t counter = 0;
+    int cycle[MAX_STACK];
+    int last_position[MAX_STACK];
+    int d, l, i;
+
+    for(i = 1; i < MAX_STACK; ++i){
+        cycle[i] = 0, last_position[i] = i;
+    }
+
+    d = 1;
+
+    while(d > 0){
+        if(cycle[d] <= n - d){
+            cycle[d]++;
+            if(vec[l = last_position[d]] == d){
+                vec[l] = 0;
+            }
+            do{
+                ++l;
+                if(l > n){
+                    l = 1;
+                }
+            } while(vec[l] != 0);
+
+            vec[l] = d;
+            last_position[d] = l;
+            if(d == n){
+                counter++;
+                c(counter, n);
+                vec[l] = 0;
+                cycle[d] = 0;
+                --d;
+            }
+            else{
+                d++;
+            }
+        }
+        else{
+            cycle[d] = 0;
+            /* vec[last_position[d]] = 0; */
+            vec[l = last_position[d]] = 0;
+            last_position[d] = ++l;
+            --d;
+        }
+
+    }
+    return counter;
+}
+
+int call_path(uint64_t nr, int ende){
     static uint64_t counter = 0;
     int i, j;
-    int control[ende + 1];
+    int control[MAX_STACK];
     int res = SUCCESS;
 
     if(nr == 0){
@@ -87,14 +137,18 @@ uint64_t call_path(uint64_t nr, int ende){
             break;
         }
     }
-    return (uint64_t) res;
+    return res;
 }
 
 int main(int argc, char *argv[]){
-    uint64_t (*calc) (uint64_t, int);
+    time_t t;
+    clock_t start_t, end_t;
+    int (*calc) (uint64_t, int);
+    uint64_t (*p)(int, int *, int (uint64_t, int));
     uint64_t perm, failure;
     int max_size = MAX_SIZE;
     int h = 0;
+
     calc = call_path;
 
     if(argc > 1){
@@ -108,7 +162,17 @@ int main(int argc, char *argv[]){
             printf("Command line arg %2d: %s\n", h, argv[i]);
         }
     }
-    printf("\n%" PRIu64 " Permutationen!\n", perm = permute(max_size - 1, tsp, calc));
-    printf("\n%" PRIu64 " Fehler in permute()\n", failure = calc(0, 0));
-    printf("\n%2.2f%% Fehlerrate", ((double)failure/perm)*100);
+    h = 0;
+    p = permute;
+    do{
+        start_t = clock();
+        printf("\n%" PRIu64 " Permutationen!\n", perm = p(max_size - 1, tsp, calc));
+        end_t = clock();
+        printf("\n%" PRIu64 " Fehler in %s()\n", failure = calc(0, 0), (h == 0 ? "permute" : "permute_neu"));
+        printf("\n%2.2f%% Fehlerrate", ((double)failure/perm)*100);
+        printf("Total CPU clocks: %ld\n", end_t - start_t);
+        printf("Total CPU Time: %f\n", (double)(end_t - start_t) / CLOCKS_PER_SEC);
+        p = permute_neu;
+        ++h;
+    }while(h < 2);
 }
