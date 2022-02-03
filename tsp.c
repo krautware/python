@@ -8,7 +8,7 @@
 #include <limits.h>
 #include <inttypes.h>
 
-#define MAX_STAEDTE 13
+#define MAX_STAEDTE 12
 #define MAX_PATH_COUNTER 10
 #define MIN_X 5
 #define MAX_X 200 - MIN_X

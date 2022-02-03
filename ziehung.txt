@@ -1,0 +1,56 @@
+Kombination 11408435 wurde 100 mal gezogen!
+12, 16, 24, 33, 39, 43
+Kombination 4928936 wurde 97 mal gezogen!
+4, 7, 13, 37, 42, 43
+Kombination 7436232 wurde 97 mal gezogen!
+6, 12, 23, 37, 38, 41
+Kombination 12834626 wurde 97 mal gezogen!
+16, 26, 27, 33, 35, 42
+Kombination 4761339 wurde 96 mal gezogen!
+4, 6, 7, 23, 25, 36
+Kombination 26982 wurde 95 mal gezogen!
+1, 2, 4, 24, 36, 39
+Kombination 7123843 wurde 95 mal gezogen!
+6, 8, 24, 28, 32, 44
+Kombination 8735216 wurde 95 mal gezogen!
+7, 35, 36, 40, 44, 46
+Kombination 1570723 wurde 94 mal gezogen!
+1, 20, 21, 24, 39, 43
+Kombination 6227113 wurde 94 mal gezogen!
+5, 9, 17, 20, 41, 48
+Kombination 1866227 -> 2, 3, 26, 35, 40, 42
+Kombination 2266462 -> 2, 6, 23, 25, 29, 30
+Kombination 6038603 -> 5, 7, 18, 20, 22, 26
+Kombination 7292638 -> 6, 10, 22, 28, 36, 40
+Kombination 8590198 -> 7, 19, 29, 34, 42, 44
+Kombination 8894265 -> 8, 10, 23, 24, 31, 46
+Kombination 9910522 -> 9, 17, 18, 25, 39, 45
+Kombination 10900417 -> 11, 15, 16, 21, 26, 36
+Kombination 12278636 -> 14, 22, 35, 36, 46, 49
+Kombination 13281762 -> 19, 21, 26, 29, 46, 48
+
+-------------------------------------------------
+
+Kombination 4316514 wurde 90 mal gezogen! 3, 15, 21, 27, 28, 47
+Kombination 11192615 wurde 88 mal gezogen! 11, 27, 30, 36, 42, 46
+Kombination 5838703 wurde 86 mal gezogen! 4, 42, 43, 44, 45, 48
+Kombination 6926906 wurde 86 mal gezogen! 6, 7, 8, 11, 36, 45
+Kombination 12830908 wurde 86 mal gezogen! 16, 25, 32, 34, 47, 49
+Kombination 3162370 wurde 85 mal gezogen! 2, 22, 31, 41, 42, 43
+Kombination 3547258 wurde 85 mal gezogen! 3, 6, 8, 16, 20, 40
+Kombination 3513763 wurde 84 mal gezogen! 3, 5, 23, 25, 27, 28
+Kombination 13054836 wurde 84 mal gezogen! 17, 28, 32, 41, 46, 49
+Kombination 491550 wurde 83 mal gezogen! 1, 5, 6, 8, 12, 39
+Kombination 378814 -> 1, 4, 8, 9, 15, 29
+Kombination 462918 -> 1, 4, 19, 37, 47, 48
+Kombination 1592285 -> 1, 20, 35, 37, 40, 42
+Kombination 1897725 -> 2, 4, 6, 21, 37, 42
+Kombination 1925020 -> 2, 4, 9, 12, 24, 45
+Kombination 3150911 -> 2, 22, 24, 26, 30, 39
+Kombination 4277158 -> 3, 14, 23, 37, 40, 48
+Kombination 5227014 -> 4, 10, 17, 43, 46, 47
+Kombination 5792024 -> 4, 25, 30, 36, 37, 49
+Kombination 6056834 -> 5, 7, 23, 24, 44, 47
+
+11071959 -> 11, 19, 27, 28, 42, 45
+30092020 -> 2124388 -> 2, 5, 18, 19, 24, 27
